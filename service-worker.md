@@ -89,7 +89,7 @@ self.addEventListener('install', (event) => {
 
 上述中，所有的文件都成功缓存才算成功，如果有任何文件下载失败，那么安装步骤就会失败。所以如果缓存列表过长的话，将会增加缓存失败的几率。
 
-**如何sw.js一直都不变化的话，那么 install 事件只有在首次安装的时候才会调用。**
+**如果sw.js一直都不变化的话，那么 install 事件只有在首次安装的时候才会调用。**
 
 #### 响应请求 `fetch`
 假如我们成功安装了 service worker ，那么在用户下次再次进入页面的时候，我们就要把已缓存的文件返回。
@@ -145,7 +145,7 @@ self.addEventListener('activate', (event) => {
 ```
 
 ## 注意事项
-在 service worker 中使用 `fetch` 的时候，请求头中默认不包含 `Cookie`，如果要添加 `Cookie` 的话，需要增加credentials参数。
+在 service worker 中使用 `fetch` 的时候，请求头中默认不包含 `Cookie`，如果要添加 `Cookie` 的话，需要增加 credentials 参数。
 
 ```js
 fetch(url, {
