@@ -1,9 +1,9 @@
 # 关于Node服务端渲染
 ![](https://img.alicdn.com/tfs/TB1RckHb5ERMeJjSspjXXcpOXXa-700-263.png)
-> 图片源自[The Benefits of Server Side Rendering Over Client Side Rendering](https://medium.com/walmartlabs/the-benefits-of-server-side-rendering-over-client-side-rendering-5d07ff2cefe8)文章
+> 图片源自 [The Benefits of Server Side Rendering Over Client Side Rendering](https://medium.com/walmartlabs/the-benefits-of-server-side-rendering-over-client-side-rendering-5d07ff2cefe8) 文章
 
 ## 什么是服务端渲染
-服务端渲染也称作 `SSR(Server Side Render)` 。不同于客户端渲染，服务端渲染会在后端把页面DOM的结构树转成 String 吐出来，然后到前端（如浏览器）解析渲染。
+服务端渲染也称作 `SSR(Server Side Render)` 。不同于客户端渲染，服务端渲染会在后端把页面 DOM 的结构树转成 String 吐出来，然后到前端（如浏览器）解析渲染。
 
 ## 优势
 
@@ -11,23 +11,23 @@
 现在单页面应用由于体验好，广泛流行。但单页应用的做法往往是后端只吐出一个页面的框架，里面没有具体内容，然后前端通过 Ajax 动态拉取内容。这就导致爬虫去访问你的站点时，服务端返回给爬虫的只有一个架子，爬虫无法抓取页面关键词之类等信息。
 
 ### 首屏直出
-意思很好理解，就是在用户首次访问的时候不用再看到菊花在那里转呀转(Loading...)，首屏就可以看到页面所有内容。另外可以在服务端通过 HTTP 接口合并请求等方式，让页面打开的首屏时间缩短。
+意思很好理解，就是在用户首次访问的时候不用再看到菊花在那里转呀转 (Loading...) ，首屏就可以看到页面所有内容。另外可以在服务端通过 HTTP 接口合并请求等方式，让页面打开的首屏时间缩短。
 
 ## Node 服务端渲染有什么特别？
 同构（isomorphic）！我想这个应该是用Node做服务端渲染最大的优势。那么什么是同构呢？
 
-其实同构大多是由 isomorphic 单词翻译来的，这个单词比较难理解含义，现在也有很多叫做 universal app。意思差不多，就是说能够实现一套代码在服务端跟客户端同时运行。
+其实同构大多是由 *isomorphic* 单词翻译来的，这个单词比较难理解含义，现在也有很多叫做 universal app。意思差不多，就是说能够实现一套代码在服务端跟客户端同时运行。
 
 假如我们客户端的页面是 React 写的，那么这套代码也能在服务端运行，并进行渲染，这就是同构的概念。同一份代码，运行构建于两端。因为都是 javascript 语法，所以用 Node 做服务器渲染在这方面有天生的优势。
 
 ## 用 Node 做同构有什么难点？
 
 ### 运行环境支持
-现在的前端开发，大多数用的是ES6/7的语法，然后用 Babel 编译成 ES5/3后让浏览器运行。Node对 ES6/7 的支持并不是十分友好，就算是最新版本的 node，也不还是不支持ES Module（就是我们常看到的 `import` 语法引入模块）。所以要达到同一份代码两端运行的目的。就必须磨平运行环境的差异。
+现在的前端开发，大多数用的是ES6/7的语法，然后用 Babel 编译成 ES5/3后让浏览器运行。 Node 对 ES6/7 的支持并不是十分友好，就算是最新版本的 node，也不还是不支持 ES Module （就是我们常看到的 `import` 语法引入模块）。所以要达到同一份代码两端运行的目的。就必须磨平运行环境的差异。
 
 那么该如何做呢？答案就是 [babel-register](https://babeljs.io/docs/usage/babel-register/)。
 
-babel-register 模块会改写 require 命令，为它加上一个钩子。此后，每当使用require加载 .js 、 .jsx 、 .es 和 .es6 后缀名的文件，就会先用 Babel 进行转码。当然，这就要求你必须在你服务端入口文件的顶部率先加载这个模块。
+babel-register 模块会改写 require 命令，为它加上一个钩子。此后，每当使用 require 加载 .js 、 .jsx 、 .es 和 .es6 后缀名的文件，就会先用 Babel 进行转码。当然，这就要求你必须在你服务端入口文件的顶部率先加载这个模块。
 
 ### 资源加载
 
