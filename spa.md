@@ -12,9 +12,9 @@
 
 前端动态的切换子页面，有一种方式是通过更换锚点。如 `www.taobao.com/#a` 和 `www.taobao/com/#b` 前端框架通过识别锚点来切换预先设置好的页面。这从功能层面上来说好像没什么问题，不过，如果你有点追求的话，你应该不会喜欢这种路由方式，因为这不够语义化，不够直观。比如我要加一个“新增类目”的页面，那么你应该想到的是`/category/add`，而不是 `#addCategory`。
 
-那么如何实现修改页面 PATH 而不刷新页面（请求服务器）呢？HTML5 的 `History` API 可以去了解一下。简单来说，可以通过这个 API 的 `pushState` 和 `popState` 来人为的操控浏览器历史记录。
+那么如何实现修改页面 path 而不刷新页面（请求服务器）呢？HTML5 的 `History` API 可以去了解一下。简单来说，可以通过这个 API 的 `pushState` 和 `popState` 来人为的操控浏览器历史记录。
 
-好了，这个时候你可能沉浸在页面无缝切换带来的快感。然后一不小心点了下刷新，GG。为什么就挂了呢？那是因为你之前对浏览器前进后退并没有走服务器请求，但是刷新页面还是会走服务器请求的，这个时候后端又没有设计对应路径的路由，当然就挂了。所以，为了修复这个问题，服务器应该做一点逻辑处理，那就是对未匹配到的路由一律返回那唯一的 HTML 文档。你可以会问那404咋办？这让前端处理下就好了。或者更方便的处理方式是直接在 nginx 层做以下配置：
+好了，这个时候你可能沉浸在页面无缝切换带来的快感。然后一不小心点了下刷新，GG。为什么就挂了呢？那是因为你之前对浏览器前进后退并没有走服务器请求，但是刷新页面还是会走服务器请求的，这个时候后端又没有设计对应路径的路由，当然就挂了。所以，为了修复这个问题，服务器应该做一点逻辑处理，那就是对未匹配到的路由一律返回那唯一的 HTML 文档。你可以会问那 404 咋办？这让前端处理下就好了。或者更方便的处理方式是直接在 nginx 层做以下配置：
 
 ```
 location / {
@@ -38,7 +38,7 @@ location / {
 
 由于项目是基于 Redux 来做应用状态管控的。Redux 的特点是比较啰嗦，但是对团队协作，规范约定还是比较不错的（redux saga 什么之类的也考虑用，不过项目时间紧，让外包同学去临时学习时间成本高）。因为啰嗦，所以意味着代码量也上去了，如果页面主 bundle 中一开始就把所有页面的 action reducer 都加载进来的话，那主 bundle 又变大了。且为了优化性能，并不想项目初始化的 root state 就包含了所有页面的初始状态，想要的效果是某个子页面加载完毕后，再向根 state 注入。于是有了下面这段 reducer 注册代码，主要用了发布订阅模式：
 
-```
+```javascript
 export class ReducerRegistry {
   constructor() {
     this._emitChange = null;
@@ -72,7 +72,7 @@ export default reducerRegistry;
 
 然后在主 bundle 中监听注入事件，并替换 store reducer：
 
-```
+```javascript
 reducerRegistry.setChangeListener(reducers => {
     store.replaceReducer(combineReducers(reducers));
 });
@@ -80,7 +80,7 @@ reducerRegistry.setChangeListener(reducers => {
 
 在子页面中注入 reducer：
 
-```
+```javascript
 reducerRegitry.register("pageName", reducer);
 ```
 
